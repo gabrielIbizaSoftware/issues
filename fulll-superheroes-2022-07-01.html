@@ -1,0 +1,1921 @@
+<html>
+
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css" />
+  <script src="https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"></script>
+  <script src="https://codeyellowbv.github.io/chartist-plugin-legend/chartist-plugin-legend.js"></script>
+  <style>
+    * {
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .green {
+      color: green;
+    }
+
+    .red {
+      color: red
+    }
+
+    .ct-label {
+      font-family: monospace;
+      font-weight: 200;
+      font-size: large;
+      color: black;
+      white-space: nowrap;
+    }
+
+    .ct-chart {
+      position: relative;
+    }
+
+    .ct-legend {
+      position: relative;
+      z-index: 10;
+      list-style: none;
+      text-align: center;
+    }
+
+    .ct-legend li {
+      position: relative;
+      padding-left: 23px;
+      margin-right: 10px;
+      margin-bottom: 3px;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    .ct-legend li:before {
+      width: 8px;
+      height: 8px;
+      position: absolute;
+      left: 0;
+      content: '';
+      border: 3px solid transparent;
+      border-radius: 2px;
+    }
+
+    .ct-legend li.inactive:before {
+      background: transparent;
+    }
+
+    .ct-legend.ct-legend-inside {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding-inline: 0;
+      font-size: small;
+    }
+
+    .ct-legend.ct-legend-inside li {
+      display: block;
+      margin: 0;
+    }
+
+    .ct-legend .ct-series-0:before {
+      background-color: #d70206;
+      border-color: #d70206;
+    }
+
+    .ct-legend .ct-series-1:before {
+      background-color: #24b317;
+      border-color: #24b317;
+    }
+
+    .ct-legend .ct-series-2:before {
+      background-color: #f4c63d;
+      border-color: #f4c63d;
+    }
+
+    .ct-legend .ct-series-3:before {
+      background-color: #d17905;
+      border-color: #d17905;
+    }
+
+    .ct-legend .ct-series-4:before {
+      background-color: #453d3f;
+      border-color: #453d3f;
+    }
+
+    .ct-legend .ct-series-5:before {
+      background-color: #59922b;
+      border-color: #59922b;
+    }
+
+    .ct-legend .ct-series-6:before {
+      background-color: #0544d3;
+      border-color: #0544d3;
+    }
+
+    .ct-legend .ct-series-7:before {
+      background-color: #6b0392;
+      border-color: #6b0392;
+    }
+
+    .ct-legend .ct-series-8:before {
+      background-color: #f05b4f;
+      border-color: #f05b4f;
+    }
+
+    .ct-legend .ct-series-9:before {
+      background-color: #dda458;
+      border-color: #dda458;
+    }
+
+    .ct-legend .ct-series-10:before {
+      background-color: #eacf7d;
+      border-color: #eacf7d;
+    }
+
+    .ct-chart-line-multipleseries .ct-legend .ct-series-0:before {
+      background-color: #d70206;
+      border-color: #d70206;
+    }
+
+    .ct-chart-line-multipleseries .ct-legend .ct-series-1:before {
+      background-color: #f4c63d;
+      border-color: #f4c63d;
+    }
+
+    .ct-chart-line-multipleseries .ct-legend li.inactive:before {
+      background: transparent;
+    }
+
+    .line {
+      display: flex;
+      height: 300px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: row;
+      align-items: stretch;
+      padding-bottom: 50px;
+    }
+
+    .line>div {
+      flex: 1;
+      position: relative;
+    }
+
+    .line>div>p {
+      text-align: center;
+    }
+
+    .ct-chart-line .ct-series-b .ct-line,
+    .ct-chart-bar .ct-series-b .ct-bar {
+      stroke: #24b317
+    }
+
+    .ct-chart-line .ct-series-b .ct-point {
+      stroke: #1c8104
+    }
+  </style>
+</head>
+
+<body>
+  <div id="main">
+    <div id="summary">
+      <h3 id="sum-title">Summary :</h3>
+      <div class="line">
+        <div id="sum-line">
+          <p>Issues by status</p>
+        </div>
+        <div id="sum-pie-label">
+          <p>Issues by label</p>
+        </div>
+      </div>
+    </div>
+    <div id="byweek">
+    </div>
+  </div>
+</body>
+<script>
+  const main = document.getElementById('main');
+  const data = {
+    "byWeek": {
+      "Week 06-26 -> 07-02": {
+        "created": 88,
+        "byLabel": {
+          "portal": {
+            "closed": 1
+          },
+          "Paie": {
+            "closed": 12,
+            "created": 1
+          },
+          "infra": {
+            "closed": 6,
+            "created": 4
+          },
+          "FEC": {
+            "closed": 5
+          },
+          "high": {
+            "closed": 3,
+            "created": 1
+          },
+          "front": {
+            "closed": 1,
+            "created": 2
+          },
+          "admin": {
+            "closed": 3,
+            "created": 2
+          },
+          "back": {
+            "closed": 9,
+            "created": 7
+          },
+          "partenaires": {
+            "closed": 1,
+            "created": 2
+          },
+          "Suppression dossier": {
+            "closed": 2
+          },
+          "Bank collector": {
+            "closed": 3,
+            "created": 1
+          },
+          "revision": {
+            "closed": 1,
+            "created": 1
+          },
+          "IEO": {
+            "closed": 7,
+            "created": 2
+          },
+          "Comptabilite": {
+            "closed": 4,
+            "created": 5
+          },
+          "EventBus": {
+            "closed": 4,
+            "created": 2
+          },
+          "medium": {
+            "closed": 2
+          },
+          "Production": {
+            "closed": 3,
+            "created": 2
+          },
+          "image posting": {
+            "closed": 2
+          },
+          "interop": {
+            "closed": 2
+          },
+          "Modèle": {
+            "closed": 1
+          },
+          "invoicing": {
+            "closed": 3,
+            "created": 4
+          },
+          "Administration (compta)": {
+            "closed": 1
+          },
+          "bug": {
+            "closed": 1,
+            "created": 8
+          },
+          "TVA / Fiscalite": {
+            "closed": 1,
+            "created": 1
+          },
+          "Backup-SQL": {
+            "closed": 1
+          },
+          "IRF": {
+            "closed": 1,
+            "created": 1
+          },
+          "quick win": {
+            "created": 1
+          },
+          "Deploiement-BM": {
+            "created": 3
+          },
+          "internal_enhancement": {
+            "created": 1
+          },
+          "BOX / GED": {
+            "created": 4
+          },
+          "New stack": {
+            "created": 1
+          },
+          "Doublon users": {
+            "created": 2
+          },
+          "dashboard": {
+            "created": 3
+          },
+          "critical": {
+            "created": 1
+          }
+        },
+        "closed": 91,
+        "byPeople": {
+          "hmellouki": {
+            "closed": 7
+          },
+          "nobody": {
+            "closed": 8,
+            "open": 1
+          },
+          "henriFraisseix": {
+            "closed": 11
+          },
+          "fchandebois": {
+            "closed": 27,
+            "open": 7
+          },
+          "CySsD": {
+            "closed": 10
+          },
+          "qchapelet": {
+            "closed": 9,
+            "open": 4
+          },
+          "sophie-despierre": {
+            "closed": 1
+          },
+          "AimeAhjaco": {
+            "closed": 3,
+            "open": 1
+          },
+          "rcortes47": {
+            "closed": 3
+          },
+          "florianharnet": {
+            "closed": 1
+          },
+          "PhilippeDuchamp": {
+            "closed": 1
+          },
+          "aurelien-litti": {
+            "closed": 1,
+            "open": 1
+          },
+          "ABAEM": {
+            "closed": 2
+          },
+          "crozet-magenta": {
+            "closed": 2,
+            "open": 2
+          },
+          "tpetitberghien": {
+            "closed": 1,
+            "open": 1
+          },
+          "pcousin": {
+            "closed": 1,
+            "open": 1
+          },
+          "CBD-iBiZa": {
+            "closed": 2,
+            "open": 2
+          },
+          "ldefrance": {
+            "closed": 1
+          },
+          "rodriguebourgeois": {
+            "open": 1
+          },
+          "Rom-mtl": {
+            "open": 1
+          },
+          "EmmanuelPliez": {
+            "open": 3
+          },
+          "FromTheOven": {
+            "open": 2
+          },
+          "RemyBaragione": {
+            "open": 1
+          },
+          "fsentenac-ie": {
+            "open": 1
+          },
+          "RomainCR": {
+            "open": 1
+          },
+          "DORINI00": {
+            "open": 1
+          },
+          "vibou": {
+            "open": 2
+          },
+          "alainBouille": {
+            "open": 1
+          },
+          "acervasio": {
+            "open": 1
+          }
+        }
+      },
+      "Week 06-19 -> 06-25": {
+        "created": 111,
+        "byLabel": {
+          "image posting": {
+            "closed": 2
+          },
+          "high": {
+            "closed": 3,
+            "created": 3
+          },
+          "infra": {
+            "closed": 7,
+            "created": 2
+          },
+          "interop": {
+            "closed": 2
+          },
+          "toolbox": {
+            "closed": 16,
+            "created": 12
+          },
+          "FEC": {
+            "closed": 16
+          },
+          "Production": {
+            "closed": 4,
+            "created": 2
+          },
+          "referentiel-inexcompta": {
+            "closed": 1
+          },
+          "IEO": {
+            "closed": 10,
+            "created": 2
+          },
+          "IRF": {
+            "closed": 1
+          },
+          "back": {
+            "closed": 14,
+            "created": 3
+          },
+          "Bank collector": {
+            "closed": 3,
+            "created": 1
+          },
+          "bug": {
+            "closed": 12,
+            "created": 3
+          },
+          "portal": {
+            "closed": 1
+          },
+          "Task": {
+            "closed": 1
+          },
+          "Paie": {
+            "closed": 15,
+            "created": 6
+          },
+          "New stack": {
+            "closed": 1,
+            "created": 1
+          },
+          "billing": {
+            "closed": 2
+          },
+          "Comptabilite": {
+            "closed": 7,
+            "created": 1
+          },
+          "EventBus": {
+            "closed": 4
+          },
+          "Administration (compta)": {
+            "closed": 1
+          },
+          "quick win": {
+            "closed": 3,
+            "created": 7
+          },
+          "invoicing": {
+            "closed": 5
+          },
+          "marketplace": {
+            "closed": 1
+          },
+          "revision": {
+            "closed": 1,
+            "created": 2
+          },
+          "dashboard": {
+            "closed": 3,
+            "created": 1
+          },
+          "partenaires": {
+            "closed": 1,
+            "created": 1
+          },
+          "TVA / Fiscalite": {
+            "closed": 2,
+            "created": 2
+          },
+          "admin": {
+            "closed": 3
+          },
+          "medium": {
+            "closed": 3
+          },
+          "Backup-SQL": {
+            "closed": 1,
+            "created": 1
+          },
+          "BOX / GED": {
+            "closed": 1,
+            "created": 1
+          },
+          "front": {
+            "closed": 1
+          },
+          "internal_enhancement": {
+            "closed": 1,
+            "created": 12
+          },
+          "Modèle": {
+            "closed": 1
+          },
+          "Deploiement-BM": {
+            "created": 2
+          },
+          "enhancement": {
+            "created": 2
+          },
+          "Portail RH": {
+            "created": 4
+          },
+          "messenger": {
+            "created": 1
+          }
+        },
+        "closed": 83,
+        "byPeople": {
+          "CySsD": {
+            "closed": 11,
+            "open": 1
+          },
+          "fchandebois": {
+            "closed": 30,
+            "open": 3
+          },
+          "acervasio": {
+            "closed": 1,
+            "open": 1
+          },
+          "JarrinCh": {
+            "closed": 1
+          },
+          "qchapelet": {
+            "closed": 7
+          },
+          "henriFraisseix": {
+            "closed": 13,
+            "open": 2
+          },
+          "EmmanuelPliez": {
+            "closed": 3
+          },
+          "nobody": {
+            "closed": 3,
+            "open": 6
+          },
+          "pcousin": {
+            "closed": 1
+          },
+          "CBD-iBiZa": {
+            "closed": 2,
+            "open": 5
+          },
+          "David-Tarier": {
+            "closed": 2,
+            "open": 1
+          },
+          "tpetitberghien": {
+            "closed": 1
+          },
+          "hmellouki": {
+            "closed": 1,
+            "open": 2
+          },
+          "Jursite-paie": {
+            "closed": 2
+          },
+          "PhilippeDuchamp": {
+            "closed": 1
+          },
+          "Samffy": {
+            "closed": 1
+          },
+          "jcregut": {
+            "closed": 1
+          },
+          "mykhaliuk": {
+            "closed": 1
+          },
+          "rsarthou-ie": {
+            "closed": 1
+          },
+          "FromTheOven": {
+            "open": 1
+          },
+          "truffo": {
+            "open": 1
+          },
+          "Gabriel7489": {
+            "open": 4
+          },
+          "Lionel-Petit": {
+            "open": 1
+          },
+          "alainBouille": {
+            "open": 1
+          },
+          "fsentenac-ie": {
+            "open": 1
+          }
+        },
+        "noActivityAfter1Week": 11
+      },
+      "Week 06-12 -> 06-18": {
+        "created": 106,
+        "byLabel": {
+          "Comptabilite": {
+            "closed": 5
+          },
+          "mobile application": {
+            "closed": 1
+          },
+          "back": {
+            "closed": 11
+          },
+          "admin": {
+            "closed": 3,
+            "created": 1
+          },
+          "FEC": {
+            "closed": 22
+          },
+          "wontfix": {
+            "closed": 1
+          },
+          "dashboard": {
+            "closed": 5
+          },
+          "toolbox": {
+            "closed": 21
+          },
+          "infra": {
+            "closed": 11
+          },
+          "EventBus": {
+            "closed": 4
+          },
+          "quick win": {
+            "closed": 2
+          },
+          "Production": {
+            "closed": 3,
+            "created": 2
+          },
+          "IEO": {
+            "closed": 11
+          },
+          "Paie": {
+            "closed": 11,
+            "created": 6
+          },
+          "Modèle": {
+            "closed": 3,
+            "created": 2
+          },
+          "Administration (compta)": {
+            "closed": 1
+          },
+          "Suppression dossier": {
+            "closed": 2,
+            "created": 1
+          },
+          "New stack": {
+            "closed": 3,
+            "created": 1
+          },
+          "Devis-Factures": {
+            "closed": 1
+          },
+          "Synchroportal": {
+            "closed": 1
+          },
+          "low": {
+            "closed": 2
+          },
+          "IRF": {
+            "closed": 1
+          },
+          "TVA / Fiscalite": {
+            "closed": 2,
+            "created": 1
+          },
+          "Deploiement-BM": {
+            "closed": 1
+          },
+          "bug": {
+            "closed": 13,
+            "created": 2
+          },
+          "Bank collector": {
+            "closed": 2
+          },
+          "Migration": {
+            "closed": 1
+          },
+          "enhancement": {
+            "closed": 1
+          },
+          "front": {
+            "closed": 4
+          },
+          "Task": {
+            "closed": 1
+          },
+          "medium": {
+            "closed": 4,
+            "created": 2
+          },
+          "data collector": {
+            "closed": 1
+          },
+          "scan": {
+            "closed": 2
+          },
+          "partenaires": {
+            "closed": 6
+          },
+          "invoicing": {
+            "closed": 5
+          },
+          "billing": {
+            "closed": 1,
+            "created": 1
+          },
+          "marketplace": {
+            "closed": 1,
+            "created": 1
+          },
+          "critical": {
+            "closed": 1
+          },
+          "high": {
+            "closed": 1
+          },
+          "Portail RH": {
+            "closed": 1
+          },
+          "Backup-SQL": {
+            "closed": 1,
+            "created": 1
+          },
+          "consultation": {
+            "created": 1
+          },
+          "stand by": {
+            "created": 1
+          },
+          "performances": {
+            "created": 1
+          },
+          "BOX / GED": {
+            "created": 2
+          }
+        },
+        "closed": 87,
+        "byPeople": {
+          "nobody": {
+            "closed": 2,
+            "open": 1
+          },
+          "fchandebois": {
+            "closed": 39,
+            "open": 1
+          },
+          "EmmanuelPliez": {
+            "closed": 3
+          },
+          "CamilleRicoeur": {
+            "closed": 1
+          },
+          "CySsD": {
+            "closed": 5
+          },
+          "FromTheOven": {
+            "closed": 1,
+            "open": 1
+          },
+          "tpetitberghien": {
+            "closed": 1
+          },
+          "henriFraisseix": {
+            "closed": 5,
+            "open": 2
+          },
+          "qchapelet": {
+            "closed": 3,
+            "open": 1
+          },
+          "rodriguebourgeois": {
+            "closed": 1
+          },
+          "mnesti": {
+            "closed": 2
+          },
+          "JarrinCh": {
+            "closed": 1
+          },
+          "CBD-iBiZa": {
+            "closed": 5
+          },
+          "fberthereau": {
+            "closed": 1,
+            "open": 1
+          },
+          "mdelescaille": {
+            "closed": 1
+          },
+          "Samffy": {
+            "closed": 1
+          },
+          "vibou": {
+            "closed": 2
+          },
+          "yohanskii": {
+            "closed": 1
+          },
+          "Gabriel7489": {
+            "closed": 2
+          },
+          "Lionel-Petit": {
+            "closed": 1
+          },
+          "truffo": {
+            "closed": 1
+          },
+          "sophie-despierre": {
+            "closed": 1
+          },
+          "mykhaliuk": {
+            "closed": 1
+          },
+          "fulllpap": {
+            "closed": 1
+          },
+          "pcousin": {
+            "closed": 1
+          },
+          "Frederique-T": {
+            "closed": 1
+          },
+          "David-Tarier": {
+            "closed": 1,
+            "open": 2
+          },
+          "JenniferMehlen": {
+            "closed": 1
+          },
+          "DORINI00": {
+            "closed": 1
+          },
+          "pierremariebrou": {
+            "open": 1
+          },
+          "hmellouki": {
+            "open": 1
+          },
+          "alainBouille": {
+            "open": 2
+          },
+          "RomainCR": {
+            "open": 1
+          }
+        },
+        "noActivityAfter1Week": 2
+      },
+      "Week 06-05 -> 06-11": {
+        "created": 70,
+        "byLabel": {
+          "Production": {
+            "closed": 3,
+            "created": 1
+          },
+          "Suppression dossier": {
+            "closed": 1
+          },
+          "admin": {
+            "closed": 5
+          },
+          "back": {
+            "closed": 8
+          },
+          "FEC": {
+            "closed": 17
+          },
+          "Bank collector": {
+            "closed": 3
+          },
+          "infra": {
+            "closed": 8
+          },
+          "IEO": {
+            "closed": 11,
+            "created": 1
+          },
+          "Comptabilite": {
+            "closed": 1,
+            "created": 2
+          },
+          "enhancement": {
+            "closed": 2,
+            "created": 1
+          },
+          "Paie": {
+            "closed": 12,
+            "created": 3
+          },
+          "Portail RH": {
+            "closed": 4
+          },
+          "EventBus": {
+            "closed": 2
+          },
+          "partenaires": {
+            "closed": 1
+          },
+          "TVA / Fiscalite": {
+            "closed": 3
+          },
+          "Modèle": {
+            "closed": 2,
+            "created": 1
+          },
+          "bug": {
+            "closed": 7
+          },
+          "front": {
+            "closed": 4
+          },
+          "Task": {
+            "closed": 1
+          },
+          "image posting": {
+            "closed": 3
+          },
+          "high": {
+            "closed": 2
+          },
+          "low": {
+            "closed": 1,
+            "created": 1
+          },
+          "invoicing": {
+            "closed": 2
+          },
+          "Backup-SQL": {
+            "closed": 1,
+            "created": 1
+          },
+          "EmailGW": {
+            "closed": 1
+          },
+          "medium": {
+            "closed": 1,
+            "created": 1
+          },
+          "revision": {
+            "closed": 1
+          },
+          "interop": {
+            "closed": 2
+          },
+          "New stack": {
+            "created": 1
+          },
+          "consultation": {
+            "created": 2
+          },
+          "BOX / GED": {
+            "created": 1
+          }
+        },
+        "closed": 64,
+        "byPeople": {
+          "fchandebois": {
+            "closed": 26,
+            "open": 2
+          },
+          "CySsD": {
+            "closed": 8
+          },
+          "hmellouki": {
+            "closed": 4
+          },
+          "rodriguebourgeois": {
+            "closed": 1
+          },
+          "henriFraisseix": {
+            "closed": 5
+          },
+          "Samffy": {
+            "closed": 2
+          },
+          "JarrinCh": {
+            "closed": 1
+          },
+          "EmmanuelPliez": {
+            "closed": 4
+          },
+          "Gabriel7489": {
+            "closed": 6
+          },
+          "pcousin": {
+            "closed": 2
+          },
+          "CBD-iBiZa": {
+            "closed": 2
+          },
+          "jcauchois": {
+            "closed": 1
+          },
+          "FromTheOven": {
+            "closed": 1
+          },
+          "fulllpap": {
+            "closed": 1
+          },
+          "RomainCR": {
+            "open": 1
+          },
+          "nobody": {
+            "open": 1
+          },
+          "jorisfulll": {
+            "open": 1
+          },
+          "pierremariebrou": {
+            "open": 1
+          },
+          "David-Tarier": {
+            "open": 1
+          },
+          "mdelescaille": {
+            "open": 1
+          },
+          "alainBouille": {
+            "open": 1
+          }
+        },
+        "noActivityAfter1Week": 1
+      },
+      "Week 05-29 -> 06-04": {
+        "created": 106,
+        "byLabel": {
+          "high": {
+            "closed": 3,
+            "created": 1
+          },
+          "Paie": {
+            "closed": 20,
+            "created": 3
+          },
+          "bug": {
+            "closed": 10
+          },
+          "FEC": {
+            "closed": 19
+          },
+          "New stack": {
+            "closed": 4
+          },
+          "invoicing": {
+            "closed": 6
+          },
+          "front": {
+            "closed": 4
+          },
+          "back": {
+            "closed": 16,
+            "created": 1
+          },
+          "infra": {
+            "closed": 11,
+            "created": 1
+          },
+          "IEO": {
+            "closed": 13,
+            "created": 2
+          },
+          "Immobilisations": {
+            "closed": 1
+          },
+          "Deploiement-BM": {
+            "closed": 3,
+            "created": 1
+          },
+          "messenger": {
+            "closed": 1
+          },
+          "TVA / Fiscalite": {
+            "closed": 1
+          },
+          "Portail RH": {
+            "closed": 7
+          },
+          "Navette": {
+            "closed": 1
+          },
+          "admin": {
+            "closed": 2
+          },
+          "image posting": {
+            "closed": 3,
+            "created": 1
+          },
+          "medium": {
+            "closed": 2,
+            "created": 1
+          },
+          "critical": {
+            "closed": 3,
+            "created": 1
+          },
+          "marketplace": {
+            "closed": 2
+          },
+          "prod": {
+            "closed": 1
+          },
+          "cred": {
+            "closed": 1
+          },
+          "Production": {
+            "closed": 6,
+            "created": 2
+          },
+          "dashboard": {
+            "closed": 3,
+            "created": 1
+          },
+          "EventBus": {
+            "closed": 8
+          },
+          "quick win": {
+            "closed": 6
+          },
+          "partenaires": {
+            "closed": 2,
+            "created": 1
+          },
+          "Legacy": {
+            "closed": 1
+          },
+          "revision": {
+            "closed": 2,
+            "created": 2
+          },
+          "FTC": {
+            "closed": 1,
+            "created": 1
+          },
+          "performances": {
+            "closed": 2,
+            "created": 1
+          },
+          "Task": {
+            "closed": 1
+          },
+          "Bank collector": {
+            "closed": 3
+          },
+          "Modèle": {
+            "closed": 1,
+            "created": 2
+          },
+          "Formation": {
+            "closed": 1
+          },
+          "toolbox": {
+            "closed": 2
+          },
+          "Comptabilite": {
+            "closed": 2
+          },
+          "consultation": {
+            "closed": 1,
+            "created": 1
+          },
+          "IRF": {
+            "closed": 1
+          },
+          "low": {
+            "closed": 3,
+            "created": 1
+          },
+          "security": {
+            "created": 1
+          },
+          "enhancement": {
+            "created": 1
+          },
+          "interop": {
+            "created": 1
+          },
+          "Suppression dossier": {
+            "created": 1
+          }
+        },
+        "closed": 86,
+        "byPeople": {
+          "fchandebois": {
+            "closed": 38,
+            "open": 2
+          },
+          "Samffy": {
+            "closed": 4
+          },
+          "henriFraisseix": {
+            "closed": 6
+          },
+          "mykhaliuk": {
+            "closed": 1
+          },
+          "CySsD": {
+            "closed": 8
+          },
+          "hmellouki": {
+            "closed": 5
+          },
+          "qchapelet": {
+            "closed": 2
+          },
+          "fsentenac-ie": {
+            "closed": 2,
+            "open": 1
+          },
+          "vibou": {
+            "closed": 1
+          },
+          "EmmanuelPliez": {
+            "closed": 5,
+            "open": 1
+          },
+          "LCastelbou": {
+            "closed": 1
+          },
+          "David-Tarier": {
+            "closed": 1,
+            "open": 1
+          },
+          "Gabriel7489": {
+            "closed": 3
+          },
+          "Frederique-T": {
+            "closed": 1
+          },
+          "PhilippeDuchamp": {
+            "closed": 2
+          },
+          "tpetitberghien": {
+            "closed": 1
+          },
+          "aurelien-litti": {
+            "closed": 2
+          },
+          "Lionel-Petit": {
+            "closed": 1
+          },
+          "rodriguebourgeois": {
+            "closed": 1
+          },
+          "mdelescaille": {
+            "closed": 1
+          },
+          "alainBouille": {
+            "open": 1
+          },
+          "acervasio": {
+            "open": 1
+          },
+          "CBD-iBiZa": {
+            "open": 2
+          },
+          "jcauchois": {
+            "open": 2
+          },
+          "johann-ibiza": {
+            "open": 1
+          },
+          "Jursite-paie": {
+            "open": 1
+          },
+          "nobody": {
+            "open": 1
+          }
+        },
+        "noActivityAfter1Week": 1
+      },
+      "Week 05-22 -> 05-28": {
+        "created": 63,
+        "byLabel": {
+          "back": {
+            "closed": 14
+          },
+          "Bank collector": {
+            "closed": 5
+          },
+          "portal": {
+            "closed": 2
+          },
+          "Paie": {
+            "closed": 10,
+            "created": 1
+          },
+          "infra": {
+            "closed": 9,
+            "created": 1
+          },
+          "Backup-SQL": {
+            "closed": 3
+          },
+          "bug": {
+            "closed": 8
+          },
+          "invoicing": {
+            "closed": 3
+          },
+          "medium": {
+            "closed": 1
+          },
+          "critical": {
+            "closed": 1
+          },
+          "cashdesk": {
+            "closed": 1
+          },
+          "Modèle": {
+            "closed": 1
+          },
+          "toolbox": {
+            "closed": 12
+          },
+          "FEC": {
+            "closed": 11
+          },
+          "enhancement": {
+            "closed": 1,
+            "created": 1
+          },
+          "Production": {
+            "closed": 4,
+            "created": 1
+          },
+          "Comptabilite": {
+            "closed": 4
+          },
+          "image posting": {
+            "closed": 2
+          },
+          "high": {
+            "closed": 5
+          },
+          "interop": {
+            "closed": 2
+          },
+          "EventBus": {
+            "closed": 2
+          },
+          "admin": {
+            "closed": 4
+          },
+          "IEO": {
+            "closed": 9
+          },
+          "Deploiement-BM": {
+            "closed": 1
+          },
+          "front": {
+            "closed": 1
+          },
+          "partenaires": {
+            "closed": 2
+          },
+          "Immobilisations": {
+            "closed": 2
+          },
+          "dashboard": {
+            "closed": 2
+          },
+          "Suppression dossier": {
+            "closed": 1
+          },
+          "performances": {
+            "created": 1
+          },
+          "revision": {
+            "created": 1
+          },
+          "consultation": {
+            "created": 1
+          }
+        },
+        "closed": 39,
+        "byPeople": {
+          "CySsD": {
+            "closed": 11
+          },
+          "rodriguebourgeois": {
+            "closed": 2
+          },
+          "henriFraisseix": {
+            "closed": 4
+          },
+          "nobody": {
+            "closed": 3
+          },
+          "fchandebois": {
+            "closed": 14,
+            "open": 1
+          },
+          "pcousin": {
+            "closed": 1
+          },
+          "hmellouki": {
+            "closed": 2
+          },
+          "rvarvier-ie": {
+            "closed": 1
+          },
+          "CBD-iBiZa": {
+            "closed": 1
+          },
+          "jcauchois": {
+            "open": 1
+          },
+          "Lionel-Petit": {
+            "open": 1
+          }
+        }
+      },
+      "Week 05-15 -> 05-21": {
+        "created": 11,
+        "byLabel": {
+          "EventBus": {
+            "closed": 6
+          },
+          "quick win": {
+            "closed": 8
+          },
+          "Production": {
+            "closed": 1
+          },
+          "Suppression dossier": {
+            "closed": 4
+          },
+          "admin": {
+            "closed": 1
+          },
+          "back": {
+            "closed": 1
+          },
+          "infra": {
+            "closed": 1
+          },
+          "Administration (compta)": {
+            "closed": 2
+          }
+        }
+      },
+      "Older": {
+        "created": 176,
+        "byLabel": {
+          "EventBus": {
+            "created": 4
+          },
+          "quick win": {
+            "created": 6
+          },
+          "Suppression dossier": {
+            "created": 5
+          },
+          "medium": {
+            "created": 12
+          },
+          "Production": {
+            "created": 27
+          },
+          "performances": {
+            "created": 5
+          },
+          "Legacy": {
+            "created": 1
+          },
+          "invoicing": {
+            "created": 2
+          },
+          "back": {
+            "created": 8
+          },
+          "Comptabilite": {
+            "created": 23
+          },
+          "IEO": {
+            "created": 49
+          },
+          "high": {
+            "created": 12
+          },
+          "internal_enhancement": {
+            "created": 3
+          },
+          "toolbox": {
+            "created": 6
+          },
+          "Script SQL": {
+            "created": 2
+          },
+          "Administration (compta)": {
+            "created": 4
+          },
+          "TVA / Fiscalite": {
+            "created": 6
+          },
+          "revision": {
+            "created": 46
+          },
+          "low": {
+            "created": 11
+          },
+          "admin": {
+            "created": 7
+          },
+          "partenaires": {
+            "created": 11
+          },
+          "bug": {
+            "created": 17
+          },
+          "document manager": {
+            "created": 3
+          },
+          "front": {
+            "created": 3
+          },
+          "Doublon users": {
+            "created": 10
+          },
+          "Paie": {
+            "created": 5
+          },
+          "BOX / GED": {
+            "created": 3
+          },
+          "Deploiement-BM": {
+            "created": 12
+          },
+          "Immobilisations": {
+            "created": 4
+          },
+          "Timesheet": {
+            "created": 2
+          },
+          "dashboard": {
+            "created": 1
+          },
+          "critical": {
+            "created": 3
+          },
+          "FTC": {
+            "created": 23
+          },
+          "enhancement": {
+            "created": 9
+          },
+          "D.P.": {
+            "created": 2
+          },
+          "prod": {
+            "created": 2
+          },
+          "inexcompta": {
+            "created": 1
+          },
+          "IRF": {
+            "created": 3
+          },
+          "infra": {
+            "created": 5
+          },
+          "Synchroportal": {
+            "created": 1
+          },
+          "activity center": {
+            "created": 1
+          },
+          "Accounting interface": {
+            "created": 2
+          },
+          "question": {
+            "created": 2
+          },
+          "Pilotage": {
+            "created": 1
+          },
+          "cred": {
+            "created": 2
+          },
+          "task manager": {
+            "created": 1
+          },
+          "help wanted": {
+            "created": 1
+          },
+          "portal": {
+            "created": 2
+          },
+          "interop": {
+            "created": 1
+          },
+          "portfolio": {
+            "created": 1
+          }
+        },
+        "byPeople": {
+          "fchandebois": {
+            "open": 35
+          },
+          "EmmanuelPliez": {
+            "open": 27
+          },
+          "qchapelet": {
+            "open": 7
+          },
+          "aurelien-litti": {
+            "open": 1
+          },
+          "CBD-iBiZa": {
+            "open": 14
+          },
+          "pbourdu": {
+            "open": 2
+          },
+          "Lionel-Petit": {
+            "open": 3
+          },
+          "Carole-JUAREZ": {
+            "open": 2
+          },
+          "henriFraisseix": {
+            "open": 4
+          },
+          "nobody": {
+            "open": 15
+          },
+          "alainBouille": {
+            "open": 6
+          },
+          "FromTheOven": {
+            "open": 2
+          },
+          "hmellouki": {
+            "open": 2
+          },
+          "tpetitberghien": {
+            "open": 1
+          },
+          "fsentenac-ie": {
+            "open": 14
+          },
+          "rodriguebourgeois": {
+            "open": 4
+          },
+          "AimeAhjaco": {
+            "open": 15
+          },
+          "jcregut": {
+            "open": 2
+          },
+          "DANIST00": {
+            "open": 1
+          },
+          "acervasio": {
+            "open": 5
+          },
+          "rcortes47": {
+            "open": 2
+          },
+          "Frederique-T": {
+            "open": 1
+          },
+          "CySsD": {
+            "open": 1
+          },
+          "RemyBaragione": {
+            "open": 1
+          },
+          "gabrielIbizaSoftware": {
+            "open": 1
+          },
+          "lfalorni": {
+            "open": 4
+          },
+          "fberthereau": {
+            "open": 1
+          },
+          "JarrinCh": {
+            "open": 1
+          },
+          "LCastelbou": {
+            "open": 1
+          },
+          "jcoste-ied": {
+            "open": 1
+          }
+        },
+        "noActivityAfter1Week": 20
+      }
+    },
+    "currentlyOpen": 281,
+    "currentlyOpenByLabel": {
+      "bug": 30,
+      "front": 5,
+      "admin": 10,
+      "back": 19,
+      "EventBus": 6,
+      "quick win": 14,
+      "infra": 13,
+      "Deploiement-BM": 18,
+      "IEO": 56,
+      "TVA / Fiscalite": 10,
+      "internal_enhancement": 16,
+      "high": 17,
+      "Production": 37,
+      "invoicing": 6,
+      "revision": 52,
+      "partenaires": 15,
+      "BOX / GED": 11,
+      "Comptabilite": 31,
+      "Paie": 25,
+      "New stack": 4,
+      "Doublon users": 12,
+      "IRF": 4,
+      "dashboard": 6,
+      "Bank collector": 2,
+      "critical": 5,
+      "enhancement": 14,
+      "Portail RH": 4,
+      "messenger": 1,
+      "Backup-SQL": 3,
+      "toolbox": 18,
+      "consultation": 5,
+      "billing": 1,
+      "marketplace": 1,
+      "stand by": 1,
+      "medium": 16,
+      "performances": 8,
+      "Modèle": 5,
+      "Suppression dossier": 7,
+      "low": 13,
+      "security": 1,
+      "image posting": 1,
+      "interop": 2,
+      "FTC": 24,
+      "Legacy": 1,
+      "Script SQL": 2,
+      "Administration (compta)": 4,
+      "document manager": 3,
+      "Immobilisations": 4,
+      "Timesheet": 2,
+      "D.P.": 2,
+      "prod": 2,
+      "inexcompta": 1,
+      "Synchroportal": 1,
+      "activity center": 1,
+      "Accounting interface": 2,
+      "question": 2,
+      "Pilotage": 1,
+      "cred": 2,
+      "task manager": 1,
+      "help wanted": 1,
+      "portal": 2,
+      "portfolio": 1
+    }
+  }
+
+  function orderObjectValues(obj, prop, limit) {
+    const array = Object.entries(obj).map(([key, value]) => typeof value === 'object' ? ({ key, ...value }) : { key, value }).sort((a, b) => {
+      return (b[prop] || 0) - (a[prop] || 0)
+    })
+
+    if (limit) {
+      const sliced = array.slice(0, limit)
+      console.log(sliced)
+      const rest = array.slice(limit)
+      sliced.push({ key: `Other (${rest.length})`, [prop]: rest.reduce((accu, curr) => accu + curr[prop], 0) })
+      return sliced
+    }
+    return array
+  }
+
+  function createElem(type, id, parent) {
+    const elem = document.createElement(type)
+    elem.id = id
+
+    if (parent) parent.appendChild(elem)
+
+    return elem
+  }
+
+  function createGraphHolder(title, parent) {
+    const div = createElem('div', title, byWeek)
+    createElem('p', null, div).innerText = title
+    parent.appendChild(div)
+    return div
+  }
+
+  document.getElementById('sum-title').innerText = `Summary (${data.currentlyOpen} issues) :`
+
+  const byLabels = orderObjectValues(data.currentlyOpenByLabel, 'value', 10)
+
+  new Chartist.Pie('#sum-pie-label', {
+    series: byLabels.map(obj => obj.value)
+  }, {
+    high: 100,
+    donut: true,
+    donutWidth: '50%',
+    donutSolid: false,
+    startAngle: 0,
+    showLabel: true,
+    plugins: [Chartist.plugins.legend({
+      legendNames: byLabels.map(obj => obj.key),
+    })]
+  });
+
+
+  const sumLineData = Object.entries(data.byWeek).map(([key, value]) => ({ name: key.slice(5, 10), value })).reverse()
+
+  new Chartist.Line('#sum-line', {
+    labels: sumLineData.map(val => val.name),
+    series: [
+      sumLineData.map(val => val.value.created),
+      sumLineData.map(val => val.value.closed),
+    ]
+  }, {
+    fullWidth: true,
+    chartPadding: {
+      right: 50
+    },
+    plugins: [Chartist.plugins.legend({
+      legendNames: ['Created', 'Closed'],
+      className: 'ct-legend-inside'
+    })]
+  });
+
+  const byWeek = document.getElementById('byweek')
+
+  Object.entries(data.byWeek).forEach(([key, value]) => {
+
+    const title = createElem('h3', key + 'title', byWeek)
+    const div = createElem('div', key, byWeek)
+    div.className = 'line'
+    title.innerHTML = `${key}  (<span class="green">-${value.closed || 0}</span> / <span class="red">+${value.created || 0}</span>)`
+    const dataByAssignee = orderObjectValues(value.byPeople, 'closed', 10)
+    console.log(dataByAssignee)
+    new Chartist.Bar(createGraphHolder('Issues by assignee', div), {
+      labels: dataByAssignee.map(val => val.key),
+      series: [
+        dataByAssignee.map(val => val.open),
+        dataByAssignee.map(val => val.closed),
+      ]
+    }, {
+      stackBars: true,
+      axisY: {
+        onlyInteger: true,
+      },
+      plugins: [Chartist.plugins.legend({
+        legendNames: ['Created', 'Closed'],
+        className: 'ct-legend-inside'
+      })]
+    });
+
+  })
+
+</script>
+
+</html>
